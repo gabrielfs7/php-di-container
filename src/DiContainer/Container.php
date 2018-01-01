@@ -12,7 +12,6 @@ class Container implements ContainerInterface
      */
     public function get($id)
     {
-
     }
 
     /**
@@ -20,6 +19,5 @@ class Container implements ContainerInterface
      */
     public function has($id)
     {
-
     }
 }
