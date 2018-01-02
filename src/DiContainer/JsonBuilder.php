@@ -31,20 +31,12 @@ class JsonBuilder
     }
 
     /**
-     * @return $this
+     * @return ContainerInterface
      */
     public function build()
     {
         $this->mapServicesAndParameters();
 
-        return $this;
-    }
-
-    /**
-     * @return ContainerInterface
-     */
-    public function getContainer()
-    {
         return new Container($this->parameters, $this->services);
     }
 

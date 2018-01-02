@@ -23,8 +23,7 @@ class ContainerTest extends TestCase
     {
         $this->builder = new JsonBuilder([__DIR__ . '/../../resources/sample-container.json']);
         $this->container = $this->builder
-            ->build()
-            ->getContainer();
+            ->build();
     }
 
     public function tearDown()
