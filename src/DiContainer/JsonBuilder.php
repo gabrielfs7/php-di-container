@@ -2,6 +2,7 @@
 
 namespace GSoares\DiContainer;
 
+use GSoares\DiContainer\Exception\InvalidFileException;
 use Psr\Container\ContainerInterface;
 
 class JsonBuilder
@@ -29,19 +30,14 @@ class JsonBuilder
         $this->parameters = [];
     }
 
+    /**
+     * @return $this
+     */
     public function build()
     {
-        foreach ($this->files as $file) {
-            $configuration = $this->getConfiguration($file);
+        $this->mapServicesAndParameters();
 
-            foreach ($configuration->parameters as $id => $values) {
-                $this->parameters[$id] = $values;
-            }
-
-            foreach ($configuration->services as $service) {
-                $this->services[$service->id] = $service;
-            }
-        }
+        return $this;
     }
 
     /**
@@ -49,7 +45,24 @@ class JsonBuilder
      */
     public function getContainer()
     {
-        return new Container();
+        return new Container($this->parameters, $this->services);
+    }
+
+    private function mapServicesAndParameters()
+    {
+        foreach ($this->files as $file) {
+            $configuration = $this->getConfiguration($file);
+
+            foreach ($configuration->parameters as $values) {
+                foreach ($values as $parameter => $value) {
+                    $this->parameters[$parameter] = $value;
+                }
+            }
+
+            foreach ($configuration->services as $service) {
+                $this->services[$service->id] = $service;
+            }
+        }
     }
 
     /**

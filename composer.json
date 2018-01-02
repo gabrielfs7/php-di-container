@@ -22,12 +22,12 @@
   },
   "autoload" : {
     "psr-4" : {
-      "GSoares\\DiContainer\\" : "src"
+      "GSoares\\DiContainer\\" : "src/DiContainer"
     }
   },
   "autoload-dev" : {
     "psr-4" : {
-      "GSoares\\Test\\DiContainer\\" : "test"
+      "GSoares\\Test\\DiContainer\\" : "test/DiContainer"
     }
   },
   "config": {

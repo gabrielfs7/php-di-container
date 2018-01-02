@@ -4,8 +4,35 @@ namespace GSoares\Test\DiContainer\Sample;
 
 class Two
 {
-    public function __construct()
-    {
+    /**
+     * @var One
+     */
+    private $one;
 
+    /**
+     * @var \stdClass
+     */
+    private $databaseConf;
+
+    public function __construct(One $one, \stdClass $databaseConf)
+    {
+        $this->one = $one;
+        $this->databaseConf = $databaseConf;
+    }
+
+    /**
+     * @return One
+     */
+    public function getOne()
+    {
+        return $this->one;
+    }
+
+    /**
+     * @return \stdClass
+     */
+    public function getDatabaseConf()
+    {
+        return $this->databaseConf;
     }
 }
