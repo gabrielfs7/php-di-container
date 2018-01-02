@@ -6,6 +6,9 @@ A PHP Dependency injection container based on JSON configuration.
 
 Create container.json file
 
+- It it possible to pass multiple json files. For instance, you can create a files containing only the "parameters" session.
+- The files must have the session "parameters" or "services" ans the example above.
+
 ```
 {
   "parameters" : [
@@ -49,7 +52,9 @@ Create container.json file
 }
 ```
 
-Create container
+Create container. 
+
+- It is possible to get services instances, simple and complex parameters.
 
 ```
 $container = (new JsonBuilder(['container.json'])
@@ -59,5 +64,5 @@ $container = (new JsonBuilder(['container.json'])
 $container->get('environment'); // prod
 $container->get('valid-ips'); // array(...)
 $container->get('database'); // \stdClass(...)
-$container->get('sample.one'); // class GSoares\Test\DiContainer\Sample\\Two
+$container->get('sample.one'); // class GSoares\Test\DiContainer\Sample\\One
 ```
