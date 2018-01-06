@@ -2,6 +2,7 @@
 
 namespace GSoares\DiContainer;
 
+use GSoares\DiContainer\Dto\ServiceDto;
 use Psr\Container\ContainerInterface;
 
 class Container implements ContainerInterface
@@ -29,23 +30,22 @@ class Container implements ContainerInterface
     public function get($id)
     {
         if ($this->hasService($id)) {
-            $serviceConfig = $this->services[$id];
+            /** @var ServiceDto $serviceDto */
+            $serviceDto = $this->services[$id];
 
             $arguments = [];
 
-            if (property_exists($serviceConfig, 'arguments')) {
-                foreach ($serviceConfig->arguments as $argument) {
-                    if (strpos($argument, '%') === 0) {
-                        $arguments[] = $this->get(str_replace('%', '', $argument));
+            foreach ($serviceDto->arguments as $argument) {
+                if (strpos($argument, '%') === 0) {
+                    $arguments[] = $this->get(str_replace('%', '', $argument));
 
-                        continue;
-                    }
-
-                    $arguments[] = $argument;
+                    continue;
                 }
+
+                $arguments[] = $argument;
             }
 
-            $reflectionClass = new \ReflectionClass($serviceConfig->class);
+            $reflectionClass = new \ReflectionClass($serviceDto->class);
 
             return $reflectionClass->newInstanceArgs($arguments);
         }

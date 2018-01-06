@@ -2,59 +2,37 @@
 
 namespace GSoares\DiContainer\Builder;
 
-use GSoares\DiContainer\Container;
-use GSoares\DiContainer\File\Validator\ValidatorInterface;
+use GSoares\DiContainer\Dto\ParameterDto;
+use GSoares\DiContainer\Dto\ServiceDto;
 
-class JsonBuilder implements BuilderInterface
+class JsonBuilder extends AbstractBuilder
 {
-
     /**
-     * @var ValidatorInterface
+     * @inheritdoc
      */
-    private $validator;
-
-    public function __construct(ValidatorInterface $validator)
+    protected function decodeParameter($parameterMap)
     {
-        $this->validator = $validator;
+        $parameterDto = new ParameterDto();
+
+        foreach ($parameterMap as $parameter => $value) {
+            $parameterDto->id = $parameter;
+            $parameterDto->value = $value;
+        }
+
+        return $parameterDto;
     }
 
     /**
      * @inheritdoc
      */
-    public function build(array $files)
+    protected function decodeService($serviceMap)
     {
-        $parameters = [];
-        $services = [];
+        $serviceDto = new ServiceDto();
 
-        array_walk(
-            $files,
-            function ($file) use (&$parameters, &$services) {
-                $this->validator
-                    ->validate($file);
+        foreach ($serviceMap as $attribute => $value) {
+            $serviceDto->$attribute = $value;
+        }
 
-                $parametersMap = $this->validator->getParametersMap();
-                $servicesMap = $this->validator->getServicesMap();
-
-                array_walk(
-                    $parametersMap,
-                    function ($parameterMap) use (&$parameters)
-                    {
-                        foreach ($parameterMap as $parameter => $value) {
-                            $parameters[$parameter] = $value;
-                        }
-                    }
-                );
-
-                array_walk(
-                    $servicesMap,
-                    function ($serviceMap) use (&$services)
-                    {
-                        $services[$serviceMap->id] = $serviceMap;
-                    }
-                );
-            }
-        );
-
-        return new Container($parameters, $services);
+        return $serviceDto;
     }
 }
