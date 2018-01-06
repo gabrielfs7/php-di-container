@@ -6,8 +6,8 @@ A PHP Dependency injection container based on JSON configuration.
 
 Create container.json file
 
-- It it possible to pass multiple json files. For instance, you can create a separated file containing only the "parameters" session.
-- The files must have the session "parameters" or "services" and the example above.
+- It it possible to pass multiple json files. For instance, you can create a separated file containing only the "parameters" section.
+- The files must have the section "parameters" or "services" and the example above.
 
 ```
 {
