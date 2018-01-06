@@ -57,8 +57,9 @@ Create container.
 - It is possible to get services instances, simple and complex parameters.
 
 ```
-$container = (new JsonBuilder(['container.json'])->build();
-    
+
+$builder = new JsonBuilder(new JsonValidator());
+$container = $builder->build(['container.json']);
 $container->get('environment'); // prod
 $container->get('valid-ips'); // array(...)
 $container->get('database'); // \stdClass(...)
