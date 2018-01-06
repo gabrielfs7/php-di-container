@@ -2,8 +2,9 @@
 
 namespace GSoares\Test\DiContainer\Integration;
 
+use GSoares\DiContainer\Builder\JsonBuilder;
 use GSoares\DiContainer\Container;
-use GSoares\DiContainer\JsonBuilder;
+use GSoares\DiContainer\File\Validator\JsonValidator;
 use PHPUnit\Framework\TestCase;
 
 class ContainerTest extends TestCase
@@ -21,9 +22,9 @@ class ContainerTest extends TestCase
 
     public function setUp()
     {
-        $this->builder = new JsonBuilder([__DIR__ . '/../../resources/sample-container.json']);
+        $this->builder = new JsonBuilder(new JsonValidator());
         $this->container = $this->builder
-            ->build();
+            ->build([__DIR__ . '/../../resources/sample-container.json']);
     }
 
     public function tearDown()
