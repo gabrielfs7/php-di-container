@@ -72,6 +72,6 @@ $container->get('sample.one'); // class GSoares\Test\DiContainer\Sample\\One
 
 - Compiling the container will validate services calls. It is recommended to do that before sending container to production.
 
-```
+```php
 $container = $builder->compile(['container.json']);
 ```
