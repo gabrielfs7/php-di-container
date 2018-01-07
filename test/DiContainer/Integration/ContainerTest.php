@@ -27,7 +27,8 @@ class ContainerTest extends TestCase
     {
         $this->builder = new Builder(new JsonValidator(), new JsonDecoder());
         $this->container = $this->builder
-            ->build([__DIR__ . '/../../resources/sample-container.json']);
+            ->disableCache()
+            ->compile([__DIR__ . '/../../resources/sample-container.json']);
     }
 
     public function tearDown()

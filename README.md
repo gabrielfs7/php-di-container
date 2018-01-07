@@ -9,7 +9,7 @@ Create container.json file
 - It it possible to pass multiple json files. For instance, you can create a separated file containing only the "parameters" section.
 - The files must have the section "parameters" or "services" and the example above.
 
-```
+```json
 {
   "parameters" : [
     {
@@ -52,16 +52,26 @@ Create container.json file
 }
 ```
 
-Create container. 
+Create the container builder: 
+
+```php
+$builder = new JsonBuilder(new JsonValidator(), new JsonDecoder());
+```
+
+Create the container: 
 
 - It is possible to get services instances, simple and complex parameters.
 
-```
-
-$builder = new JsonBuilder(new JsonValidator());
+```php
 $container = $builder->build(['container.json']);
 $container->get('environment'); // prod
 $container->get('valid-ips'); // array(...)
 $container->get('database'); // \stdClass(...)
 $container->get('sample.one'); // class GSoares\Test\DiContainer\Sample\\One
+```
+
+- Compiling the container will validate services calls. It is recommended to do that before sending container to production.
+
+```
+$container = $builder->compile(['container.json']);
 ```

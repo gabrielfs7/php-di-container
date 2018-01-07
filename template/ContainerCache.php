@@ -30,6 +30,14 @@ class ContainerCache implements \ArrayAccess
     public function offsetUnset($offset) {}
 
     /**
+     * @return bool
+     */
+    public function isCompiled()
+    {
+        #isCompiled#
+    }
+
+    /**
      * @param string $offset
      *
      * @return string

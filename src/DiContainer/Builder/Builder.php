@@ -12,6 +12,11 @@ class Builder implements BuilderInterface
 {
 
     /**
+     * @var array
+     */
+    private $registries;
+
+    /**
      * @var ValidatorInterface
      */
     private $validator;
@@ -21,10 +26,62 @@ class Builder implements BuilderInterface
      */
     private $decoder;
 
+    /**
+     * @var bool
+     */
+    private $enableCache;
+
+    /**
+     * @var string
+     */
+    private $containerCachePath;
+
+    /**
+     * @var string
+     */
+    private $containerTemplatePath;
+
     public function __construct(ValidatorInterface $validator, DecoderInterface $decoder)
     {
         $this->validator = $validator;
         $this->decoder = $decoder;
+        $this->enableCache = true;
+        $this->registries = [];
+        $this->containerCachePath = realpath(__DIR__ . '/../../../cache') . '/ContainerCache.php';
+        $this->containerTemplatePath = realpath(__DIR__ . '/../../../template/ContainerCache.php');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function disableCache()
+    {
+        $this->enableCache = false;
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function compile(array $files)
+    {
+        $cacheClass = $this->createCacheClass($files);
+
+        $container = new Container($cacheClass);
+
+        if (!$cacheClass->isCompiled()) {
+            foreach ($this->registries as $id) {
+                $container->get($id);
+            }
+
+            $class = file_get_contents($this->containerCachePath);
+            $class = str_replace('#isCompiled#', 'return true;', $class);
+
+            file_put_contents($this->containerCachePath, $class);
+        }
+
+        return $container;
     }
 
     /**
@@ -32,11 +89,7 @@ class Builder implements BuilderInterface
      */
     public function build(array $files)
     {
-        if (!class_exists('ContainerCache')) {
-            $this->createCacheClass($files);
-        }
-
-        return new Container(new \ContainerCache());
+        return new Container($this->createCacheClass($files));
     }
 
     /**
@@ -57,6 +110,8 @@ class Builder implements BuilderInterface
                 $services[$serviceDto->id] = $this->createMethodByService($serviceDto);
             }
         );
+
+        $this->registries = array_keys($services);
 
         return $services;
     }
@@ -79,6 +134,8 @@ class Builder implements BuilderInterface
                 $parameters[$parameterDto->id] = $this->createMethodByParameter($parameterDto);
             }
         );
+
+        $this->registries = array_keys($parameters);
 
         return $parameters;
     }
@@ -155,34 +212,41 @@ class Builder implements BuilderInterface
 
     /**
      * @param array $files
+     *
+     * @return \ContainerCache
      */
     private function createCacheClass(array $files)
     {
-        $cachePath = realpath(__DIR__ . '/../../../cache');
-        $classPath = $cachePath . '/ContainerCache.php';
-
-        if (file_exists($classPath)) {
-            unlink($classPath);
+        if (class_exists('ContainerCache')) {
+            return new \ContainerCache();
         }
 
-        $methods = '';
-
-        array_walk(
-            $files,
-            function ($file) use (&$methods) {
-                $this->validator
-                    ->validate($file);
-
-                $methods .= implode(PHP_EOL, $this->mapServices($this->validator->getServicesMap()));
-                $methods .= implode(PHP_EOL, $this->mapParameters($this->validator->getParametersMap()));
+        if (!file_exists($this->containerCachePath) || !$this->enableCache) {
+            if (file_exists($this->containerCachePath)) {
+                unlink($this->containerCachePath);
             }
-        );
 
-        $class = file_get_contents(__DIR__ . '/../../../template/ContainerCache.php');
-        $class = str_replace('#methods#', $methods, $class);
+            $methods = '';
 
-        file_put_contents($classPath, $class);
+            array_walk(
+                $files,
+                function ($file) use (&$methods) {
+                    $this->validator
+                        ->validate($file);
 
-        include $classPath;
+                    $methods .= implode(PHP_EOL, $this->mapServices($this->validator->getServicesMap()));
+                    $methods .= implode(PHP_EOL, $this->mapParameters($this->validator->getParametersMap()));
+                }
+            );
+
+            $class = file_get_contents($this->containerTemplatePath);
+            $class = str_replace('#methods#', $methods, $class);
+
+            file_put_contents($this->containerCachePath, $class);
+        }
+
+        include $this->containerCachePath;
+
+        return new \ContainerCache();
     }
 }
