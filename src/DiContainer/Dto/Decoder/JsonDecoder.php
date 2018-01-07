@@ -1,16 +1,17 @@
 <?php
 
-namespace GSoares\DiContainer\Builder;
+namespace GSoares\DiContainer\Dto\Decoder;
 
 use GSoares\DiContainer\Dto\ParameterDto;
 use GSoares\DiContainer\Dto\ServiceDto;
 
-class JsonBuilder extends AbstractBuilder
+class JsonDecoder implements DecoderInterface
 {
+
     /**
      * @inheritdoc
      */
-    protected function decodeParameter($parameterMap)
+    public function decodeParameter($parameterMap)
     {
         $parameterDto = new ParameterDto();
 
@@ -25,7 +26,7 @@ class JsonBuilder extends AbstractBuilder
     /**
      * @inheritdoc
      */
-    protected function decodeService($serviceMap)
+    public function decodeService($serviceMap)
     {
         $serviceDto = new ServiceDto();
 

@@ -3,11 +3,12 @@
 namespace GSoares\DiContainer\Builder;
 
 use GSoares\DiContainer\Container;
+use GSoares\DiContainer\Dto\Decoder\DecoderInterface;
 use GSoares\DiContainer\Dto\ParameterDto;
 use GSoares\DiContainer\Dto\ServiceDto;
 use GSoares\DiContainer\File\Validator\ValidatorInterface;
 
-abstract class AbstractBuilder implements BuilderInterface
+class Builder implements BuilderInterface
 {
 
     /**
@@ -15,9 +16,15 @@ abstract class AbstractBuilder implements BuilderInterface
      */
     private $validator;
 
-    public function __construct(ValidatorInterface $validator)
+    /**
+     * @var DecoderInterface
+     */
+    private $decoder;
+
+    public function __construct(ValidatorInterface $validator, DecoderInterface $decoder)
     {
         $this->validator = $validator;
+        $this->decoder = $decoder;
     }
 
     /**
@@ -33,20 +40,6 @@ abstract class AbstractBuilder implements BuilderInterface
     }
 
     /**
-     * @param mixed $parameterMap
-     *
-     * @return ParameterDto
-     */
-    abstract protected function decodeParameter($parameterMap);
-
-    /**
-     * @param mixed $serviceMap
-     *
-     * @return ServiceDto
-     */
-    abstract protected function decodeService($serviceMap);
-
-    /**
      * @param array $servicesMap
      *
      * @return array
@@ -59,7 +52,7 @@ abstract class AbstractBuilder implements BuilderInterface
             $servicesMap,
             function ($serviceMap) use (&$services)
             {
-                $serviceDto = $this->decodeService($serviceMap);
+                $serviceDto = $this->decoder->decodeService($serviceMap);
 
                 $services[$serviceDto->id] = $this->createMethodByService($serviceDto);
             }
@@ -81,7 +74,7 @@ abstract class AbstractBuilder implements BuilderInterface
             $parametersMap,
             function ($parameterMap) use (&$parameters)
             {
-                $parameterDto = $this->decodeParameter($parameterMap);
+                $parameterDto = $this->decoder->decodeParameter($parameterMap);
 
                 $parameters[$parameterDto->id] = $this->createMethodByParameter($parameterDto);
             }
