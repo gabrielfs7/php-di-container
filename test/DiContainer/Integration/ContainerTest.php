@@ -6,6 +6,7 @@ use GSoares\DiContainer\Builder\JsonBuilder;
 use GSoares\DiContainer\Container;
 use GSoares\DiContainer\File\Validator\JsonValidator;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class ContainerTest extends TestCase
 {
