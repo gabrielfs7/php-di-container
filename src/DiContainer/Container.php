@@ -2,6 +2,7 @@
 
 namespace GSoares\DiContainer;
 
+use GSoares\DiContainer\Exception\NotFountException;
 use Psr\Container\ContainerInterface;
 
 class Container implements ContainerInterface
@@ -25,6 +26,8 @@ class Container implements ContainerInterface
         if ($this->has($id)) {
             return $this->registries->offsetGet($id);
         }
+
+        throw new NotFountException("Container registry [$id] not found");
     }
 
     /**

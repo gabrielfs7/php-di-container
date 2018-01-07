@@ -63,6 +63,26 @@ class ContainerTest extends TestCase
 
     /**
      * @test
+     *
+     * @expectedException \GSoares\DiContainer\Exception\NotFountException
+     * @expectedExceptionMessage Container registry [not.existent] not found
+     */
+    public function testNotExistentServiceMustThrowException()
+    {
+        $this->container->get('not.existent');
+    }
+
+    /**
+     * @test
+     */
+    public function testHasRegistry()
+    {
+        $this->assertTrue($this->container->has('database'));
+        $this->assertFalse($this->container->has('not.existent'));
+    }
+
+    /**
+     * @test
      */
     public function testGetComplexParameter()
     {

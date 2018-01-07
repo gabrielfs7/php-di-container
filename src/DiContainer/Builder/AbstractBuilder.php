@@ -115,7 +115,7 @@ abstract class AbstractBuilder implements BuilderInterface
 
     /**
      * @param ServiceDto $serviceDto
-     * 
+     *
      * @return string
      */
     private function createMethodByService(ServiceDto $serviceDto)
