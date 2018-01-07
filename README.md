@@ -71,6 +71,13 @@ $container->get('database'); // \stdClass(...)
 $container->get('sample.one'); // class GSoares\Test\DiContainer\Sample\\One
 ```
 
+For local development you can disable container cache before building it 
+
+```php
+$container = $builder->disableCache()
+    ->build(['container.json']);
+```
+
 - Compiling the container will validate services calls. It is recommended to do that before sending container to production.
 - Always remove the "ContainerCache.php" file inside the cache directory before deploy your application
 
