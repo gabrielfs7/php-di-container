@@ -36,19 +36,20 @@ class Builder implements BuilderInterface
      */
     private $containerCachePath;
 
+
     /**
      * @var string
      */
     private $containerTemplatePath;
 
-    public function __construct(ValidatorInterface $validator, DecoderInterface $decoder)
+    public function __construct($containerCachePath, ValidatorInterface $validator, DecoderInterface $decoder)
     {
         $this->validator = $validator;
         $this->decoder = $decoder;
         $this->enableCache = true;
         $this->registries = [];
-        $this->containerCachePath = realpath(__DIR__ . '/../../../cache') . '/ContainerCache.php';
         $this->containerTemplatePath = realpath(__DIR__ . '/../../../template/ContainerCache.php');
+        $this->setContainerCachePath($containerCachePath);
     }
 
     /**
@@ -75,10 +76,10 @@ class Builder implements BuilderInterface
                 $container->get($id);
             }
 
-            $class = file_get_contents($this->containerCachePath);
+            $class = file_get_contents($this->getContainerCacheFile());
             $class = str_replace('#isCompiled#', 'return true;', $class);
 
-            file_put_contents($this->containerCachePath, $class);
+            file_put_contents($this->getContainerCacheFile(), $class);
         }
 
         return $container;
@@ -90,6 +91,14 @@ class Builder implements BuilderInterface
     public function build(array $files)
     {
         return new Container($this->createCacheClass($files));
+    }
+
+    /**
+     * @return string
+     */
+    private function getContainerCacheFile()
+    {
+        return $this->containerCachePath . '/ContainerCache.php';
     }
 
     /**
@@ -221,9 +230,9 @@ class Builder implements BuilderInterface
             return new \ContainerCache();
         }
 
-        if (!file_exists($this->containerCachePath) || !$this->enableCache) {
-            if (file_exists($this->containerCachePath)) {
-                unlink($this->containerCachePath);
+        if (!file_exists($this->getContainerCacheFile()) || !$this->enableCache) {
+            if (file_exists($this->getContainerCacheFile())) {
+                unlink($this->getContainerCacheFile());
             }
 
             $methods = '';
@@ -242,11 +251,29 @@ class Builder implements BuilderInterface
             $class = file_get_contents($this->containerTemplatePath);
             $class = str_replace('#methods#', $methods, $class);
 
-            file_put_contents($this->containerCachePath, $class);
+            file_put_contents($this->getContainerCacheFile(), $class);
         }
 
-        include $this->containerCachePath;
+        include $this->getContainerCacheFile();
 
         return new \ContainerCache();
+    }
+
+    /**
+     * @param $containerCachePath
+     *
+     * @return $this
+     */
+    private function setContainerCachePath($containerCachePath)
+    {
+        if (!file_exists($containerCachePath) ||
+            !is_dir($containerCachePath) ||
+            !is_writable($containerCachePath)) {
+            throw new \InvalidArgumentException("Invalid container cache path [$containerCachePath]");
+        }
+
+        $this->containerCachePath = $containerCachePath;
+
+        return $this;
     }
 }

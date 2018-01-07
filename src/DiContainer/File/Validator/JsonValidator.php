@@ -25,7 +25,7 @@ class JsonValidator extends AbstractValidator
          $hasServices = property_exists($object, 'services');
          $hasParameters = property_exists($object, 'parameters');
 
-         if (!$hasServices && $hasParameters) {
+         if (!$hasServices && !$hasParameters) {
              throw new InvalidFileException("Json file [$file] must have either 'services' or 'parameters'");
          }
 

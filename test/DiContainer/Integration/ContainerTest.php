@@ -25,15 +25,24 @@ class ContainerTest extends TestCase
 
     public function setUp()
     {
-        $this->builder = new Builder(new JsonValidator(), new JsonDecoder());
+        $cachePath = __DIR__ . '/../../../cache';
+        $configPath = __DIR__ . '/../../resources';
+
+        $this->builder = new Builder($cachePath, new JsonValidator(), new JsonDecoder());
         $this->container = $this->builder
             ->disableCache()
-            ->compile([__DIR__ . '/../../resources/sample-container.json']);
+            ->compile(
+                [
+                    "$configPath/sample-container1.json",
+                    "$configPath/sample-container2.json"
+                ]
+            );
     }
 
     public function tearDown()
     {
         $this->builder = null;
+        $this->container = null;
     }
 
     /**
