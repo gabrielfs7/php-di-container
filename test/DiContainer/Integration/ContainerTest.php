@@ -4,6 +4,9 @@ namespace GSoares\Test\DiContainer\Integration;
 
 use GSoares\DiContainer\Builder\BuilderInterface;
 use GSoares\DiContainer\Builder\Builder;
+use GSoares\DiContainer\Builder\JsonBuilder;
+use GSoares\DiContainer\Cache\Creator;
+use GSoares\DiContainer\Cache\MethodCreator;
 use GSoares\DiContainer\Container;
 use GSoares\DiContainer\Dto\Decoder\JsonDecoder;
 use GSoares\DiContainer\File\Validator\JsonValidator;
@@ -28,10 +31,10 @@ class ContainerTest extends TestCase
         $cachePath = __DIR__ . '/../../../cache';
         $configPath = __DIR__ . '/../../resources';
 
-        $this->builder = new Builder($cachePath, new JsonValidator(), new JsonDecoder());
+        $this->builder = new JsonBuilder($cachePath);
         $this->container = $this->builder
-            ->disableCache()
-            ->compile(
+            ->enableCompile()
+            ->build(
                 [
                     "$configPath/sample-container1.json",
                     "$configPath/sample-container2.json"
@@ -63,6 +66,17 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf('GSoares\Test\DiContainer\Sample\Two', $two);
         $this->assertInstanceOf('GSoares\Test\DiContainer\Sample\One', $two->getOne());
         $this->assertEquals($this->getDatabaseConfig(), $two->getDatabaseConf());
+    }
+
+    /**
+     * @test
+     */
+    public function testCallServiceMethod()
+    {
+        $three = $this->container->get('sample.three');
+
+        $this->assertInstanceOf('GSoares\Test\DiContainer\Sample\Two', $three->getTwo());
+        $this->assertInstanceOf('GSoares\Test\DiContainer\Sample\One', $three->getOne());
     }
 
     /**

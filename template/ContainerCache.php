@@ -1,5 +1,6 @@
 <?php
-class ContainerCache implements \ArrayAccess
+
+class ContainerCache implements \GSoares\DiContainer\Cache\CacheInterface
 {
     #methods#
 

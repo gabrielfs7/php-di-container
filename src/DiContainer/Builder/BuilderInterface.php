@@ -10,19 +10,17 @@ interface BuilderInterface
     /**
      * @return $this
      */
-    public function disableCache();
+    public function enableCache();
 
     /**
-     * @param array $files
+     * @return $this
+     */
+    public function enableCompile();
+
+    /**
+     * @param array $containerFiles
      *
      * @return ContainerInterface
      */
-    public function compile(array $files);
-
-    /**
-     * @param array $files
-     *
-     * @return ContainerInterface
-     */
-    public function build(array $files);
+    public function build($containerFiles);
 }

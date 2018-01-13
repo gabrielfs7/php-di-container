@@ -2,6 +2,7 @@
 
 namespace GSoares\DiContainer;
 
+use GSoares\DiContainer\Cache\CacheInterface;
 use GSoares\DiContainer\Exception\NotFountException;
 use Psr\Container\ContainerInterface;
 
@@ -9,13 +10,13 @@ class Container implements ContainerInterface
 {
 
     /**
-     * @var \ArrayAccess
+     * @var CacheInterface
      */
-    private $registries;
+    private $cache;
 
-    public function __construct(\ArrayAccess $registries)
+    public function __construct(CacheInterface $cache)
     {
-       $this->registries = $registries;
+       $this->cache = $cache;
     }
 
     /**
@@ -24,7 +25,7 @@ class Container implements ContainerInterface
     public function get($id)
     {
         if ($this->has($id)) {
-            return $this->registries->offsetGet($id);
+            return $this->cache->offsetGet($id);
         }
 
         throw new NotFountException("Container registry [$id] not found");
@@ -35,6 +36,6 @@ class Container implements ContainerInterface
      */
     public function has($id)
     {
-        return $this->registries->offsetExists($id);
+        return $this->cache->offsetExists($id);
     }
 }

@@ -19,4 +19,9 @@ class ServiceDto
      * @var array
      */
     public $arguments = [];
+
+    /**
+     * @var CallDto[]
+     */
+    public $call = [];
 }
