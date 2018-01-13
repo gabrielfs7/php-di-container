@@ -16,7 +16,7 @@ class Container implements ContainerInterface
 
     public function __construct(CacheInterface $cache)
     {
-       $this->cache = $cache;
+        $this->cache = $cache;
     }
 
     /**

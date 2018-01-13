@@ -2,7 +2,6 @@
 
 namespace GSoares\DiContainer\Cache;
 
-
 interface MethodCreatorInterface
 {
 

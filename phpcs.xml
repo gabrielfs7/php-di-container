@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<ruleset name="PHP_CodeSniffer">
+    <description>Project Standards.</description>
+    <file>src</file>
+    <file>test</file>
+    <report>summary</report>
+    <bootstrap>vendor/autoload.php</bootstrap>
+    <reportWidth>5</reportWidth>
+    <reportFile>public/phpcs/index.html</reportFile>
+    <rule ref="PSR2"/>
+    <rule ref="PSR1"/>
+</ruleset>

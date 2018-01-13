@@ -30,8 +30,7 @@ class MethodCreator implements MethodCreatorInterface
 
         array_walk(
             $servicesMap,
-            function ($serviceMap) use (&$services)
-            {
+            function ($serviceMap) use (&$services) {
                 $serviceDto = $this->decoder->decodeService($serviceMap);
 
                 $services[$serviceDto->id] = $this->createMethodByService($serviceDto);
@@ -52,8 +51,7 @@ class MethodCreator implements MethodCreatorInterface
 
         array_walk(
             $parametersMap,
-            function ($parameterMap) use (&$parameters)
-            {
+            function ($parameterMap) use (&$parameters) {
                 $parameterDto = $this->decoder->decodeParameter($parameterMap);
 
                 $parameters[$parameterDto->id] = $this->createMethodByParameter($parameterDto);

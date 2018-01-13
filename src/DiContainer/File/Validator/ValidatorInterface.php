@@ -2,7 +2,6 @@
 
 namespace GSoares\DiContainer\File\Validator;
 
-
 interface ValidatorInterface
 {
 
