@@ -7,7 +7,7 @@ A PHP Dependency injection container based on JSON configuration.
 Create container.json file
 
 - It it possible to pass multiple json files. For instance, you can create a separated file containing only the "parameters" section.
-- The files must have the section "parameters" or "services" and the example above.
+- The files must have the section "parameters" or "services" as is the example above.
 
 ```javascript
 {
@@ -82,16 +82,12 @@ $container->get('database'); // \stdClass(...)
 $container->get('sample.one'); // class GSoares\Test\DiContainer\Sample\\One
 ```
 
-For local development you can disable container cache before building it 
+- For production you can enable cache and compile it before build.
+- It is recommended compile locally before sending to production.
+- Always remove "$containerCachePath/ContainerCache.php" before compile. Compile will only work if the cache file was removed.
 
 ```php
-$container = $builder->disableCache()
+$container = $builder->enableCache() //will use the cache file only...
+    ->enableCompile() //will test if all services are mapped correctly...
     ->build(['container.json']);
-```
-
-- Compiling the container will validate services calls. It is recommended to do that before sending container to production.
-- Always remove the "ContainerCache.php" file inside the cache directory before deploy your application
-
-```php
-$container = $builder->compile(['container.json']);
 ```
