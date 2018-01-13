@@ -1,6 +1,6 @@
 <?php
 
-namespace GSoares\Test\DiContainer\Sample;
+namespace GSoares\Test\Sample;
 
 abstract class AbstractSample
 {

@@ -2,11 +2,11 @@
   "services" : [
     {
       "id" : "sample.one",
-      "class" : "GSoares\\Test\\DiContainer\\Sample\\One"
+      "class" : "GSoares\\Test\\Sample\\One"
     },
     {
       "id" : "sample.two",
-      "class" : "GSoares\\Test\\DiContainer\\Sample\\Two",
+      "class" : "GSoares\\Test\\Sample\\Two",
       "arguments" : [
         "%sample.one%",
         "%database%"
@@ -14,7 +14,7 @@
     },
     {
       "id" : "sample.three",
-      "class" : "GSoares\\Test\\DiContainer\\Sample\\Three",
+      "class" : "GSoares\\Test\\Sample\\Three",
       "arguments" : [
         "%sample.one%"
       ],

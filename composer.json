@@ -27,7 +27,7 @@
   },
   "autoload-dev" : {
     "psr-4" : {
-      "GSoares\\Test\\DiContainer\\" : "test/DiContainer"
+      "GSoares\\Test\\" : "tests"
     }
   },
   "config": {

@@ -1,15 +1,10 @@
 <?php
 
-namespace GSoares\Test\DiContainer\Integration;
+namespace GSoares\Test\Integration\DiContainer;
 
 use GSoares\DiContainer\Builder\BuilderInterface;
-use GSoares\DiContainer\Builder\Builder;
 use GSoares\DiContainer\Builder\JsonBuilder;
-use GSoares\DiContainer\Cache\Creator;
-use GSoares\DiContainer\Cache\MethodCreator;
 use GSoares\DiContainer\Container;
-use GSoares\DiContainer\Dto\Decoder\JsonDecoder;
-use GSoares\DiContainer\File\Validator\JsonValidator;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -53,7 +48,7 @@ class ContainerTest extends TestCase
      */
     public function testGetSimpleService()
     {
-        $this->assertInstanceOf('GSoares\Test\DiContainer\Sample\One', $this->container->get('sample.one'));
+        $this->assertInstanceOf('GSoares\Test\Sample\One', $this->container->get('sample.one'));
     }
 
     /**
@@ -63,8 +58,8 @@ class ContainerTest extends TestCase
     {
         $two = $this->container->get('sample.two');
 
-        $this->assertInstanceOf('GSoares\Test\DiContainer\Sample\Two', $two);
-        $this->assertInstanceOf('GSoares\Test\DiContainer\Sample\One', $two->getOne());
+        $this->assertInstanceOf('GSoares\Test\Sample\Two', $two);
+        $this->assertInstanceOf('GSoares\Test\Sample\One', $two->getOne());
         $this->assertEquals($this->getDatabaseConfig(), $two->getDatabaseConf());
     }
 
@@ -75,8 +70,8 @@ class ContainerTest extends TestCase
     {
         $three = $this->container->get('sample.three');
 
-        $this->assertInstanceOf('GSoares\Test\DiContainer\Sample\Two', $three->getTwo());
-        $this->assertInstanceOf('GSoares\Test\DiContainer\Sample\One', $three->getOne());
+        $this->assertInstanceOf('GSoares\Test\Sample\Two', $three->getTwo());
+        $this->assertInstanceOf('GSoares\Test\Sample\One', $three->getOne());
     }
 
     /**

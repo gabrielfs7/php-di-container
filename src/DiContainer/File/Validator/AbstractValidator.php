@@ -24,16 +24,8 @@ abstract class AbstractValidator implements ValidatorInterface
     {
         $error = null;
 
-        if (!is_file($file)) {
-            $error = "File [$file] is not a regular file";
-        }
-
-        if (!is_readable($file)) {
-            $error = "File [$file] is not readable";
-        }
-
-        if ($error) {
-            throw new InvalidFileException($error);
+        if (!is_file($file) || !is_readable($file)) {
+            throw new InvalidFileException(sprintf('File [%s] must be an existent and readable file', $file));
         }
 
         $this->parseFile($file);
