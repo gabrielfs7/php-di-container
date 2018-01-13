@@ -46,7 +46,18 @@ Create container.json file
     },
     {
       "id" : "sample.three",
-      "class" : "GSoares\\Test\\DiContainer\\Sample\\Three"
+      "class" : "GSoares\\Test\\DiContainer\\Sample\\Three",
+      "arguments" : [
+        "%sample.one%"
+      ],
+      "call" : [
+        {
+          "method" : "setTwo",
+          "arguments" : [
+            "%sample.two%"
+          ]
+        }
+      ]
     }
   ]
 }
@@ -56,7 +67,7 @@ Create the container builder:
 
 ```php
 $containerCachePath = '/tmp/cache';
-$builder = new JsonBuilder($containerCachePath, new JsonValidator(), new JsonDecoder());
+$builder = new JsonBuilder($containerCachePath);
 ```
 
 Create the container: 
