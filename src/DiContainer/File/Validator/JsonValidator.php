@@ -14,11 +14,16 @@ class JsonValidator extends AbstractValidator
     {
         $fileContent = file_get_contents($file);
 
+        $fileName = basename($file);
+
         $object = json_decode($fileContent);
 
         if (!$object instanceof \stdClass) {
             throw new InvalidFileException(
-                "Invalid Json file [$file]. Json last error[" . json_last_error() . "] " . json_last_error_msg()
+                sprintf(
+                    'Invalid Json file [%s]. Json last error[%s] %s',
+                    $fileName, json_last_error(), json_last_error_msg()
+                )
             );
         }
 
@@ -26,18 +31,33 @@ class JsonValidator extends AbstractValidator
         $hasParameters = property_exists($object, 'parameters');
 
         if (!$hasServices && !$hasParameters) {
-            throw new InvalidFileException("Json file [$file] must have either 'services' or 'parameters'");
+            throw new InvalidFileException(
+                sprintf(
+                    'Json file [%s] must have either "services" or "parameters"',
+                    $fileName
+                )
+            );
         }
 
         $this->servicesMap = $hasServices ? $object->services : [];
         $this->parametersMap = $hasParameters ? $object->parameters : [];
 
         if (!is_array($this->servicesMap)) {
-            throw new InvalidFileException("Json file [$file] 'services' must be a valid array");
+            throw new InvalidFileException(
+                sprintf(
+                    'Json file [%s] "services" must be a valid array',
+                    $fileName
+                )
+            );
         }
 
         if (!is_array($this->parametersMap)) {
-            throw new InvalidFileException("Json file [$file] 'parameters' must be a valid array");
+            throw new InvalidFileException(
+                sprintf(
+                    'Json file [%s] "parameters" must be a valid array',
+                    $fileName
+                )
+            );
         }
     }
 }
