@@ -2,8 +2,10 @@
 
 namespace GSoares\Test\Unit\DiContainer\Dto\Decoder;
 
+use GSoares\DiContainer\Dto\CallDto;
 use GSoares\DiContainer\Dto\Decoder\JsonDecoder;
 use GSoares\DiContainer\Dto\ParameterDto;
+use GSoares\DiContainer\Dto\ServiceDto;
 use PHPUnit\Framework\TestCase;
 
 class JsonDecoderTest extends TestCase
@@ -26,21 +28,21 @@ class JsonDecoderTest extends TestCase
 
     /**
      * @param ParameterDto $expected
-     * @param \stdClass $parameterMap
+     * @param \stdClass $map
      *
      * @test
      *
-     * @dataProvider decoderParameterProvider
+     * @dataProvider decodeParameterProvider
      */
-    public function testDecoderParameter(ParameterDto $expected, \stdClass $parameterMap)
+    public function testDecodeParameter(ParameterDto $expected, \stdClass $map)
     {
-        $this->assertEquals($expected, $this->decoder->decodeParameter($parameterMap));
+        $this->assertEquals($expected, $this->decoder->decodeParameter($map));
     }
 
     /**
      * @return array
      */
-    public function decoderParameterProvider()
+    public function decodeParameterProvider()
     {
         return [
             [
@@ -91,6 +93,100 @@ class JsonDecoderTest extends TestCase
     }
 
     /**
+     * @param ServiceDto $expected
+     * @param \stdClass $map
+     *
+     * @test
+     *
+     * @dataProvider decodeServiceProvider
+     */
+    public function testDecodeService(ServiceDto $expected, \stdClass $map)
+    {
+        $this->assertEquals($expected, $this->decoder->decodeService($map));
+    }
+
+    /**
+     * @return array
+     */
+    public function decodeServiceProvider()
+    {
+        return [
+            [
+                $this->createServiceDto(
+                    'sample.one',
+                    "GSoares\\Test\\Sample\\One",
+                    [],
+                    []
+                ),
+                $this->createServiceMap(
+                    'sample.one',
+                    "GSoares\\Test\\Sample\\One",
+                    [],
+                    []
+                )
+            ],
+            [
+                $this->createServiceDto(
+                    'sample.two',
+                    "GSoares\\Test\\Sample\\Two",
+                    [
+                        "%sample.one%",
+                        "%database%"
+                    ],
+                    []
+                ),
+                $this->createServiceMap(
+                    'sample.two',
+                    "GSoares\\Test\\Sample\\Two",
+                    [
+                        "%sample.one%",
+                        "%database%"
+                    ],
+                    []
+                )
+            ]
+        ];
+    }
+
+    /**
+     * @param string $id
+     * @param string $class
+     * @param array $arguments
+     * @param CallDto[] $calls
+     *
+     * @return ParameterDto
+     */
+    private function createServiceDto($id, $class, array $arguments, array $calls)
+    {
+        $dto = new ServiceDto();
+        $dto->id = $id;
+        $dto->class = $class;
+        $dto->arguments = $arguments;
+        $dto->call = $calls;
+
+        return $dto;
+    }
+
+    /**
+     * @param string $id
+     * @param string $class
+     * @param array $arguments
+     * @param array $calls
+     *
+     * @return \stdClass
+     */
+    private function createServiceMap($id, $class, array $arguments, array $calls)
+    {
+        $map = new \stdClass();
+        $map->id = $id;
+        $map->class = $class;
+        $map->arguments = $arguments;
+        $map->call = $calls;
+
+        return $map;
+    }
+
+    /**
      * @param string $id
      * @param mixed $value
      *
@@ -98,11 +194,11 @@ class JsonDecoderTest extends TestCase
      */
     private function createParameterDto($id, $value)
     {
-        $parameterDto = new ParameterDto();
-        $parameterDto->id = $id;
-        $parameterDto->value = $value;
+        $dto = new ParameterDto();
+        $dto->id = $id;
+        $dto->value = $value;
 
-        return $parameterDto;
+        return $dto;
     }
 
     /**
@@ -113,9 +209,9 @@ class JsonDecoderTest extends TestCase
      */
     private function createParameterMap($id, $value)
     {
-        $parameterMap = new \stdClass();
-        $parameterMap->$id = $value;
+        $map = new \stdClass();
+        $map->$id = $value;
 
-        return $parameterMap;
+        return $map;
     }
 }
