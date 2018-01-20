@@ -5,6 +5,7 @@ namespace GSoares\DiContainer\Dto\Decoder;
 use GSoares\DiContainer\Dto\CallDto;
 use GSoares\DiContainer\Dto\ParameterDto;
 use GSoares\DiContainer\Dto\ServiceDto;
+use GSoares\DiContainer\Exception\InvalidMapException;
 
 class JsonDecoder implements DecoderInterface
 {
@@ -12,11 +13,13 @@ class JsonDecoder implements DecoderInterface
     /**
      * @inheritdoc
      */
-    public function decodeParameter($parameterMap)
+    public function decodeParameter($map)
     {
+        $this->validateMap($map);
+
         $parameterDto = new ParameterDto();
 
-        foreach ($parameterMap as $parameter => $value) {
+        foreach ($map as $parameter => $value) {
             $parameterDto->id = $parameter;
             $parameterDto->value = $value;
         }
@@ -27,11 +30,13 @@ class JsonDecoder implements DecoderInterface
     /**
      * @inheritdoc
      */
-    public function decodeService($serviceMap)
+    public function decodeService($map)
     {
+        $this->validateMap($map);
+
         $serviceDto = new ServiceDto();
 
-        foreach ($serviceMap as $attribute => $value) {
+        foreach ($map as $attribute => $value) {
             if ($attribute == 'call') {
                 $serviceDto->call = $this->calls($value);
 
@@ -61,5 +66,23 @@ class JsonDecoder implements DecoderInterface
         }
 
         return $callsDto;
+    }
+
+    /**
+     * @param mixed $map
+     *
+     * @throws InvalidMapException
+     */
+    private function validateMap($map)
+    {
+        if (!$map instanceof \stdClass) {
+            throw new InvalidMapException("Map is not instance of stdClass");
+        }
+
+        $arrayMap = (array) $map;
+
+        if (empty($arrayMap)) {
+            throw new InvalidMapException("Map is empty");
+        }
     }
 }

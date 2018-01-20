@@ -9,16 +9,16 @@ interface DecoderInterface
 {
 
     /**
-     * @param mixed $parameterMap
+     * @param mixed $map
      *
      * @return ParameterDto
      */
-    public function decodeParameter($parameterMap);
+    public function decodeParameter($map);
 
     /**
-     * @param mixed $serviceMap
+     * @param mixed $map
      *
      * @return ServiceDto
      */
-    public function decodeService($serviceMap);
+    public function decodeService($map);
 }

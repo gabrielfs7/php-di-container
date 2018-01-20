@@ -61,7 +61,7 @@ class JsonDecoderTest extends TestCase
                     [
                         '127.0.0.1',
                         '127.0.0.2',
-                        '127.0.0.2'
+                        '127.0.0.3'
                     ]
                 ),
                 $this->createParameterMap(
@@ -69,7 +69,7 @@ class JsonDecoderTest extends TestCase
                     [
                         '127.0.0.1',
                         '127.0.0.2',
-                        '127.0.0.2'
+                        '127.0.0.3'
                     ]
                 )
             ],
@@ -88,6 +88,41 @@ class JsonDecoderTest extends TestCase
                         'value'
                     )
                 )
+            ]
+        ];
+    }
+
+    /**
+     * @param \stdClass $map
+     *
+     * @test
+     *
+     * @dataProvider decodeInvalidServiceProvider
+     *
+     * @expectedException \GSoares\DiContainer\Exception\InvalidMapException
+     */
+    public function testDecodeServiceWithInvalidDataMustThrowException($map)
+    {
+        $this->decoder->decodeService($map);
+    }
+
+    /**
+     * @return array
+     */
+    public function decodeInvalidServiceProvider()
+    {
+        return [
+            [
+                new \stdClass(),
+            ],
+            [
+                []
+            ],
+            [
+                null
+            ],
+            [
+                1
             ]
         ];
     }
