@@ -144,9 +144,73 @@ class JsonDecoderTest extends TestCase
                     ],
                     []
                 )
-            ]
+            ],
+            [
+                $this->createServiceDto(
+                    'sample.three',
+                    "GSoares\\Test\\Sample\\Three",
+                    [
+                        "%sample.one%"
+                    ],
+                    [
+                        $this->createCallDto(
+                            'setTwo',
+                            [
+                                "%sample.two%"
+                            ]
+                        )
+                    ]
+                ),
+                $this->createServiceMap(
+                    'sample.three',
+                    "GSoares\\Test\\Sample\\Three",
+                    [
+                        "%sample.one%"
+                    ],
+                    [
+                        $this->createCallMap(
+                            'setTwo',
+                            [
+                                "%sample.two%"
+                            ]
+                        )
+                    ]
+                )
+            ],
         ];
     }
+
+
+    /**
+     * @param $method
+     * @param array $arguments
+     *
+     * @return CallDto
+     */
+    private function createCallDto($method, array $arguments)
+    {
+        $dto = new CallDto();
+        $dto->method = $method;
+        $dto->arguments = $arguments;
+
+        return $dto;
+    }
+
+    /**
+     * @param $method
+     * @param array $arguments
+     *
+     * @return \stdClass
+     */
+    private function createCallMap($method, array $arguments)
+    {
+        $map = new \stdClass();
+        $map->method = $method;
+        $map->arguments = $arguments;
+
+        return $map;
+    }
+
 
     /**
      * @param string $id
