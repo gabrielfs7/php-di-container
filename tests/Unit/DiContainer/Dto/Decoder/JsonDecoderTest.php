@@ -6,6 +6,7 @@ use GSoares\DiContainer\Dto\CallDto;
 use GSoares\DiContainer\Dto\Decoder\JsonDecoder;
 use GSoares\DiContainer\Dto\ParameterDto;
 use GSoares\DiContainer\Dto\ServiceDto;
+use GSoares\DiContainer\Exception\InvalidMapException;
 use PHPUnit\Framework\TestCase;
 
 class JsonDecoderTest extends TestCase
@@ -93,17 +94,21 @@ class JsonDecoderTest extends TestCase
     }
 
     /**
-     * @param \stdClass $map
+     * @param mixed $map
+     * @param string $exceptionMessage
      *
      * @test
      *
      * @dataProvider decodeInvalidServiceProvider
-     *
-     * @expectedException \GSoares\DiContainer\Exception\InvalidMapException
      */
-    public function testDecodeServiceWithInvalidDataMustThrowException($map)
+    public function testDecodeServiceWithInvalidDataMustThrowException($map, $exceptionMessage)
     {
-        $this->decoder->decodeService($map);
+        try {
+            $this->decoder->decodeService($map);
+        } catch (InvalidMapException $exception) {
+            $this->assertInstanceOf('GSoares\DiContainer\Exception\InvalidMapException', $exception);
+            $this->assertEquals($exceptionMessage, $exception->getMessage());
+        }
     }
 
     /**
@@ -114,15 +119,19 @@ class JsonDecoderTest extends TestCase
         return [
             [
                 new \stdClass(),
+                "Map is empty"
             ],
             [
-                []
+                [],
+                "Map is not instance of stdClass"
             ],
             [
-                null
+                null,
+                "Map is not instance of stdClass"
             ],
             [
-                1
+                1,
+                "Map is not instance of stdClass"
             ]
         ];
     }

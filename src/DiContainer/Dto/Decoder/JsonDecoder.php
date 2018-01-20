@@ -32,7 +32,7 @@ class JsonDecoder implements DecoderInterface
      */
     public function decodeService($map)
     {
-        $this->validateMap($map);
+        $this->validateServiceMap($map);
 
         $serviceDto = new ServiceDto();
 
@@ -83,6 +83,41 @@ class JsonDecoder implements DecoderInterface
 
         if (empty($arrayMap)) {
             throw new InvalidMapException("Map is empty");
+        }
+    }
+
+    /**
+     * @param mixed $map
+     *
+     * @throws InvalidMapException
+     */
+    private function validateServiceMap($map)
+    {
+        $this->validateMap($map);
+
+        $allowedProperties = [
+            'id' => function ($var) {
+                return is_string($var);
+            },
+            'class' => function ($var) {
+                return is_string($var);
+            },
+            'arguments' => function ($var) {
+                return is_array($var);
+            },
+            'call' => function ($var) {
+                return is_array($var) || is_null($var);
+            }
+        ];
+
+        foreach ($map as $property => $value) {
+            if (!in_array($property, array_keys($allowedProperties))) {
+                throw new InvalidMapException(sprintf('Invalid property %s', $property));
+            }
+
+            if (!$allowedProperties[$property]($value)) {
+                throw new InvalidMapException(sprintf('Invalid property %s value', $property));
+            }
         }
     }
 }
