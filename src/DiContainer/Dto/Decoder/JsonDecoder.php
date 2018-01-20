@@ -112,11 +112,21 @@ class JsonDecoder implements DecoderInterface
 
         foreach ($map as $property => $value) {
             if (!in_array($property, array_keys($allowedProperties))) {
-                throw new InvalidMapException(sprintf('Invalid property %s', $property));
+                throw new InvalidMapException(
+                    sprintf(
+                        'Invalid service property [%s]',
+                        $property
+                    )
+                );
             }
 
             if (!$allowedProperties[$property]($value)) {
-                throw new InvalidMapException(sprintf('Invalid property %s value', $property));
+                throw new InvalidMapException(
+                    sprintf(
+                        'Invalid service property [%s] value',
+                        $property
+                    )
+                );
             }
         }
     }

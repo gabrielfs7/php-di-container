@@ -99,7 +99,7 @@ class JsonDecoderTest extends TestCase
      *
      * @test
      *
-     * @dataProvider decodeInvalidServiceProvider
+     * @dataProvider invalidServiceMapProvider
      */
     public function testDecodeServiceWithInvalidDataMustThrowException($map, $exceptionMessage)
     {
@@ -114,26 +114,72 @@ class JsonDecoderTest extends TestCase
     /**
      * @return array
      */
-    public function decodeInvalidServiceProvider()
+    public function invalidServiceMapProvider()
     {
-        return [
+        return array_merge(
             [
-                new \stdClass(),
-                "Map is empty"
+                [
+                    (object) [
+                        'invalid' => ''
+                    ],
+                    'Invalid service property [invalid]'
+                ],
+                [
+                    (object) [
+                        'id' => []
+                    ],
+                    'Invalid service property [id] value'
+                ],
+                [
+                    (object) [
+                        'class' => []
+                    ],
+                    'Invalid service property [class] value'
+                ],
+                [
+                    (object) [
+                        'arguments' => ''
+                    ],
+                    'Invalid service property [arguments] value'
+                ],
+                [
+                    (object) [
+                        'call' => new \stdClass()
+                    ],
+                    'Invalid service property [call] value'
+                ]
             ],
-            [
-                [],
-                "Map is not instance of stdClass"
-            ],
-            [
-                null,
-                "Map is not instance of stdClass"
-            ],
-            [
-                1,
-                "Map is not instance of stdClass"
-            ]
-        ];
+            $this->invalidMapProvider()
+        );
+    }
+
+    /**
+     * @param mixed $map
+     * @param string $exceptionMessage
+     *
+     * @test
+     *
+     * @dataProvider invalidParameterMapProvider
+     */
+    public function testDecodeParameterWithInvalidDataMustThrowException($map, $exceptionMessage)
+    {
+        try {
+            $this->decoder->decodeParameter($map);
+        } catch (InvalidMapException $exception) {
+            $this->assertInstanceOf('GSoares\DiContainer\Exception\InvalidMapException', $exception);
+            $this->assertEquals($exceptionMessage, $exception->getMessage());
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function invalidParameterMapProvider()
+    {
+        return array_merge(
+            [],
+            $this->invalidMapProvider()
+        );
     }
 
     /**
@@ -321,5 +367,30 @@ class JsonDecoderTest extends TestCase
         $map->$id = $value;
 
         return $map;
+    }
+
+    /**
+     * @return array
+     */
+    public function invalidMapProvider()
+    {
+        return [
+            [
+                new \stdClass(),
+                "Map is empty"
+            ],
+            [
+                [],
+                "Map is not instance of stdClass"
+            ],
+            [
+                null,
+                "Map is not instance of stdClass"
+            ],
+            [
+                1,
+                "Map is not instance of stdClass"
+            ]
+        ];
     }
 }
