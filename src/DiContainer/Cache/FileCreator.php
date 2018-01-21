@@ -61,15 +61,30 @@ class FileCreator implements FileCreatorInterface
     private function validateCachePath($cachePath)
     {
         if (!file_exists($cachePath)) {
-            throw new InvalidFileException("Container cache path [$cachePath] does not exists");
+            throw new InvalidFileException(
+                sprintf(
+                    'Container cache path [%s] does not exists',
+                    $cachePath
+                )
+            );
         }
 
         if (!is_dir($cachePath)) {
-            throw new InvalidFileException("Container cache path [$cachePath] is not a directory");
+            throw new InvalidFileException(
+                sprintf(
+                    'Container cache path [%s] is not a directory',
+                    basename($cachePath)
+                )
+            );
         }
 
         if (!is_writable($cachePath)) {
-            throw new InvalidFileException("Container cache path [$cachePath] is not writable");
+            throw new InvalidFileException(
+                sprintf(
+                    'Container cache path [%s] is not writable',
+                    basename($cachePath)
+                )
+            );
         }
     }
 }

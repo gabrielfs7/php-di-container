@@ -20,7 +20,7 @@ class Compiler implements CompilerInterface
         }
 
         $class = file_get_contents($cacheFile);
-        $class = str_replace('#isCompiled#', 'return true;', $class);
+        $class = str_replace('return false;#isCompiled#', 'return true;', $class);
 
         file_put_contents($cacheFile, $class);
     }

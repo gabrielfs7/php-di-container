@@ -35,7 +35,7 @@ class ContainerCache implements \GSoares\DiContainer\Cache\CacheInterface
      */
     public function isCompiled()
     {
-        #isCompiled#
+        return false;#isCompiled#
     }
 
     /**
