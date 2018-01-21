@@ -23,16 +23,31 @@ class ContainerTest extends TestCase
 
     public function setUp()
     {
-        $cachePath = __DIR__ . '/../../../cache';
-        $configPath = __DIR__ . '/../../resources';
+        $cachePath = __DIR__ .
+            DIRECTORY_SEPARATOR . '..' .
+            DIRECTORY_SEPARATOR . '..' .
+            DIRECTORY_SEPARATOR . '..' .
+            DIRECTORY_SEPARATOR . 'cache';
+
+        $containerCacheFile = $cachePath . DIRECTORY_SEPARATOR . 'ContainerCache.php';
+
+        if (file_exists($containerCacheFile)) {
+            unlink($containerCacheFile);
+        }
+
+        $configPath = __DIR__ .
+            DIRECTORY_SEPARATOR . '..' .
+            DIRECTORY_SEPARATOR . '..' .
+            DIRECTORY_SEPARATOR . 'resources';
 
         $this->builder = new JsonBuilder($cachePath);
         $this->container = $this->builder
+            ->enableCache()
             ->enableCompile()
             ->build(
                 [
-                    "$configPath/sample-container1.json",
-                    "$configPath/sample-container2.json"
+                    $configPath . DIRECTORY_SEPARATOR . 'sample-container1.json',
+                    $configPath . DIRECTORY_SEPARATOR . 'sample-container2.json'
                 ]
             );
     }
