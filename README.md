@@ -4,11 +4,13 @@ A PHP Dependency injection container based on JSON configuration.
 
 ## Sample
 
-Create container.json file
+Create your container json files:
 
 - It it possible to pass multiple json files. For instance, you can create a separated file containing only the "parameters" section.
-- The files must have the section "parameters" or "services" as is the example above.
+- The files must have the section "parameters" or "services" as is the example above. 
+- In the example above we have one file with parameters and other with services. 
 
+#### parameters.json
 ```javascript
 {
   "parameters" : [
@@ -30,7 +32,13 @@ Create container.json file
         "127.0.0.3"
       ]
     }
-  ],
+  ]
+}
+```
+  
+#### services.json
+```javascript
+{  
   "services" : [
     {
       "id" : "sample.one",
@@ -80,6 +88,12 @@ Create container.json file
       "id" : "sample.inheritance.one",
       "class" : "GSoares\\Test\\Sample\\InheritanceOne",
       "parent" : "sample.abstract"
+    },
+    {
+      "id" : "sample.inheritance.two",
+      "class" : "GSoares\\Test\\Sample\\InheritanceTwo",
+      "parent" : "sample.abstract",
+      "unique" : true
     }
   ]
 }
@@ -97,7 +111,7 @@ Create the container:
 - It is possible to get services instances, simple and complex parameters.
 
 ```php
-$container = $builder->build(['container.json']);
+$container = $builder->build(['parameters.json', 'services.json']);
 $container->get('environment'); // prod
 $container->get('valid-ips'); // array(...)
 $container->get('database'); // \stdClass(...)
@@ -107,6 +121,16 @@ $container->get('sample.one'); // class GSoares\Test\DiContainer\Sample\\One
 $container->get('sample.inheritance.one')->getOne(); // class GSoares\Test\DiContainer\Sample\\One
 $container->get('sample.inheritance.one')->getTwo(); // class GSoares\Test\DiContainer\Sample\\Two
 $container->get('sample.inheritance.one')->getThree(); // class GSoares\Test\DiContainer\Sample\\Three
+
+# Unique services have instances created every time "container::get" is called:
+$inheritanceOne = $container->get('sample.inheritance.one');
+$inheritanceTwo = $container->get('sample.inheritance.two');
+
+$inheritanceOne->setChangeable('test');
+$inheritanceTwo->setChangeable('test');
+
+$container->get('sample.inheritance.one')->getChangeable(); //test
+$container->get('sample.inheritance.two')->getChangeable(); //null
 ```
 
 - For production you can enable cache and compile it before build.
