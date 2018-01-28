@@ -117,12 +117,16 @@ $container->get('valid-ips'); // array(...)
 $container->get('database'); // \stdClass(...)
 $container->get('sample.one'); // class GSoares\Test\DiContainer\Sample\\One
 
-# Inheritance
+#
+# Inheritor services receive the constructor arguments from abstract service:
+#
 $container->get('sample.inheritance.one')->getOne(); // class GSoares\Test\DiContainer\Sample\\One
 $container->get('sample.inheritance.one')->getTwo(); // class GSoares\Test\DiContainer\Sample\\Two
 $container->get('sample.inheritance.one')->getThree(); // class GSoares\Test\DiContainer\Sample\\Three
 
+#
 # Unique services have instances created every time "container::get" is called:
+#
 $inheritanceOne = $container->get('sample.inheritance.one');
 $inheritanceTwo = $container->get('sample.inheritance.two');
 
