@@ -1,0 +1,9 @@
+{
+  "services" : [
+    {
+      "id" : "sample.inheritance.two",
+      "class" : "GSoares\\Test\\Sample\\InheritanceTwo",
+      "parent" : "invalid"
+    }
+  ]
+}

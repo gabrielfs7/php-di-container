@@ -138,6 +138,18 @@ class JsonDecoderTest extends TestCase
                 ],
                 [
                     (object) [
+                        'parent' => []
+                    ],
+                    'Invalid service property [parent] value'
+                ],
+                [
+                    (object) [
+                        'abstract' => []
+                    ],
+                    'Invalid service property [abstract] value'
+                ],
+                [
+                    (object) [
                         'arguments' => ''
                     ],
                     'Invalid service property [arguments] value'

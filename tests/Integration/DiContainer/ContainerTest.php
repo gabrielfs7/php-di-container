@@ -4,12 +4,17 @@ namespace GSoares\Test\Integration\DiContainer;
 
 use GSoares\DiContainer\Builder\BuilderInterface;
 use GSoares\DiContainer\Builder\JsonBuilder;
-use GSoares\DiContainer\Container;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use stdClass;
 
 class ContainerTest extends TestCase
 {
+
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
 
     /**
      * @var BuilderInterface
@@ -17,45 +22,61 @@ class ContainerTest extends TestCase
     private $builder;
 
     /**
-     * @var Container
+     * @var string
      */
-    private $container;
+    private $cachePath;
+
+    /**
+     * @var string
+     */
+    private $configPath;
+
+    /**
+     * @var array
+     */
+    private $defaultPaths;
 
     public function setUp()
     {
-        $cachePath = __DIR__ .
+        $this->cachePath = __DIR__ .
             DIRECTORY_SEPARATOR . '..' .
             DIRECTORY_SEPARATOR . '..' .
             DIRECTORY_SEPARATOR . '..' .
             DIRECTORY_SEPARATOR . 'cache';
 
-        $containerCacheFile = $cachePath . DIRECTORY_SEPARATOR . 'ContainerCache.php';
-
-        if (file_exists($containerCacheFile)) {
-            unlink($containerCacheFile);
-        }
-
-        $configPath = __DIR__ .
+        $this->configPath = __DIR__ .
             DIRECTORY_SEPARATOR . '..' .
             DIRECTORY_SEPARATOR . '..' .
             DIRECTORY_SEPARATOR . 'resources';
 
-        $this->builder = new JsonBuilder($cachePath);
-        $this->container = $this->builder
-            ->enableCache()
-            ->enableCompile()
-            ->build(
-                [
-                    $configPath . DIRECTORY_SEPARATOR . 'sample-container1.json',
-                    $configPath . DIRECTORY_SEPARATOR . 'sample-container2.json'
-                ]
-            );
+        $this->defaultPaths = [
+            $this->configPath . DIRECTORY_SEPARATOR . 'sample-container1.json',
+            $this->configPath . DIRECTORY_SEPARATOR . 'sample-container2.json'
+        ];
     }
 
     public function tearDown()
     {
+        $this->defaultPaths = null;
+        $this->cachePath = null;
+        $this->configPath = null;
         $this->builder = null;
         $this->container = null;
+    }
+
+    /**
+     * @test
+     *
+     * @expectedException \GSoares\DiContainer\Exception\NotFountException
+     * @expectedExceptionMessage Abstract service [invalid] not found
+     */
+    public function testGetInheritorWithInvalidAbstractionMustThrowException()
+    {
+        $this->createContainer(
+            [
+                $this->configPath . DIRECTORY_SEPARATOR . 'invalid-abstraction.json'
+            ]
+        );
     }
 
     /**
@@ -63,7 +84,10 @@ class ContainerTest extends TestCase
      */
     public function testGetSimpleService()
     {
-        $this->assertInstanceOf('GSoares\Test\Sample\One', $this->container->get('sample.one'));
+        $this->assertInstanceOf(
+            'GSoares\Test\Sample\One',
+            $this->createContainer($this->defaultPaths)->get('sample.one')
+        );
     }
 
     /**
@@ -71,7 +95,7 @@ class ContainerTest extends TestCase
      */
     public function testGetComplexService()
     {
-        $two = $this->container->get('sample.two');
+        $two = $this->createContainer($this->defaultPaths)->get('sample.two');
 
         $this->assertInstanceOf('GSoares\Test\Sample\Two', $two);
         $this->assertInstanceOf('GSoares\Test\Sample\One', $two->getOne());
@@ -83,6 +107,8 @@ class ContainerTest extends TestCase
      */
     public function testCallServiceMethod()
     {
+        $this->createContainer($this->defaultPaths);
+
         $three = $this->container->get('sample.three');
 
         $this->assertInstanceOf('GSoares\Test\Sample\Two', $three->getTwo());
@@ -92,9 +118,22 @@ class ContainerTest extends TestCase
     /**
      * @test
      */
+    public function testGetInheritorService()
+    {
+        $inheritanceOne = $this->createContainer($this->defaultPaths)->get('sample.inheritance.one');
+
+        $this->assertInstanceOf('GSoares\Test\Sample\InheritanceOne', $inheritanceOne);
+        $this->assertInstanceOf('GSoares\Test\Sample\One', $inheritanceOne->getOne());
+        $this->assertInstanceOf('GSoares\Test\Sample\Two', $inheritanceOne->getTwo());
+        $this->assertInstanceOf('GSoares\Test\Sample\Three', $inheritanceOne->getThree());
+    }
+
+    /**
+     * @test
+     */
     public function testGetParameter()
     {
-        $this->assertEquals('prod', $this->container->get('environment'));
+        $this->assertEquals('prod', $this->createContainer($this->defaultPaths)->get('environment'));
     }
 
     /**
@@ -105,7 +144,7 @@ class ContainerTest extends TestCase
      */
     public function testNotExistentServiceMustThrowException()
     {
-        $this->container->get('not.existent');
+        $this->createContainer($this->defaultPaths)->get('not.existent');
     }
 
     /**
@@ -113,8 +152,10 @@ class ContainerTest extends TestCase
      */
     public function testHasRegistry()
     {
-        $this->assertTrue($this->container->has('database'));
-        $this->assertFalse($this->container->has('not.existent'));
+        $container = $this->createContainer($this->defaultPaths);
+
+        $this->assertTrue($container->has('database'));
+        $this->assertFalse($container->has('not.existent'));
     }
 
     /**
@@ -122,7 +163,7 @@ class ContainerTest extends TestCase
      */
     public function testGetComplexParameter()
     {
-        $this->assertEquals($this->getDatabaseConfig(), $this->container->get('database'));
+        $this->assertEquals($this->getDatabaseConfig(), $this->createContainer($this->defaultPaths)->get('database'));
     }
 
     /**
@@ -137,5 +178,26 @@ class ContainerTest extends TestCase
         $databaseConf->port = "3306";
 
         return $databaseConf;
+    }
+
+    /**
+     * @param array $paths
+     *
+     * @return \Psr\Container\ContainerInterface
+     */
+    private function createContainer(array $paths)
+    {
+        $containerCacheFile = $this->cachePath . DIRECTORY_SEPARATOR . 'ContainerCache.php';
+
+        if (file_exists($containerCacheFile)) {
+            unlink($containerCacheFile);
+        }
+
+        $this->builder = new JsonBuilder($this->cachePath);
+
+        return $this->container = $this->builder
+            ->enableCache()
+            ->enableCompile()
+            ->build($paths);
     }
 }

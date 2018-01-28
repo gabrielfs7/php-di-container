@@ -6,18 +6,61 @@ abstract class AbstractSample
 {
 
     /**
-     * @var SampleOne
+     * @var One
      */
-    protected $sampleOne;
+    protected $one;
 
     /**
-     * @var SampleTwo
+     * @var Two
      */
-    protected $sampleTwo;
+    protected $two;
 
-    public function __construct(SampleOne $sampleOne, SampleTwo $sampleTwo)
+    /**
+     * @var Three
+     */
+    protected $three;
+
+    public function __construct(One $one, Two $two)
     {
-        $this->sampleOne = $sampleOne;
-        $this->sampleTwo = $sampleTwo;
+        $this->one = $one;
+        $this->two = $two;
     }
+
+    /**
+     * @return One
+     */
+    public function getOne()
+    {
+        return $this->one;
+    }
+
+    /**
+     * @return Two
+     */
+    public function getTwo()
+    {
+        return $this->two;
+    }
+
+    /**
+     * @return Three
+     */
+    public function getThree()
+    {
+        return $this->three;
+    }
+
+    /**
+     * @param Three $three
+     *
+     * @return $this
+     */
+    public function setThree($three)
+    {
+        $this->three = $three;
+
+        return $this;
+    }
+
+
 }

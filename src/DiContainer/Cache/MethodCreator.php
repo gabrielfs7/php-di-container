@@ -5,6 +5,7 @@ namespace GSoares\DiContainer\Cache;
 use GSoares\DiContainer\Dto\Decoder\DecoderInterface;
 use GSoares\DiContainer\Dto\ParameterDto;
 use GSoares\DiContainer\Dto\ServiceDto;
+use GSoares\DiContainer\Exception\NotFountException;
 
 class MethodCreator implements MethodCreatorInterface
 {
@@ -27,13 +28,49 @@ class MethodCreator implements MethodCreatorInterface
     public function createByServices(array $servicesMap)
     {
         $services = [];
+        $abstractions = [];
+        $inheritors = [];
 
         array_walk(
             $servicesMap,
-            function ($serviceMap) use (&$services) {
+            function ($serviceMap) use (&$services, &$abstractions, &$inheritors) {
                 $serviceDto = $this->decoder->decodeService($serviceMap);
 
+                if ($serviceDto->parent) {
+                    $inheritors[$serviceDto->id] = $serviceDto;
+
+                    return;
+                }
+
+                if ($serviceDto->abstract) {
+                    $abstractions[$serviceDto->id] = $serviceDto;
+
+                    return;
+                }
+
                 $services[$serviceDto->id] = $this->createMethodByService($serviceDto);
+            }
+        );
+
+        array_walk(
+            $inheritors,
+            function ($inheritor) use ($abstractions, &$services) {
+                /** @var ServiceDto $inheritor */
+                if (!isset($abstractions[$inheritor->parent])) {
+                    throw new NotFountException(
+                        sprintf(
+                            'Abstract service [%s] not found',
+                            $inheritor->parent
+                        )
+                    );
+                }
+
+                /** @var ServiceDto $abstraction */
+                $abstraction = $abstractions[$inheritor->parent];
+
+                $inheritor->merge($abstraction);
+
+                $services[$inheritor->id] = $this->createMethodByService($inheritor);
             }
         );
 
@@ -94,6 +131,10 @@ class MethodCreator implements MethodCreatorInterface
                 $callDto->method,
                 $this->buildMethodArguments($callDto->arguments)
             );
+        }
+
+        if ($serviceDto->parent) {
+
         }
 
         return sprintf(

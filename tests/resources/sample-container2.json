@@ -26,6 +26,28 @@
           ]
         }
       ]
+    },
+    {
+      "id" : "sample.abstract",
+      "class" : "GSoares\\Test\\Sample\\Abstract",
+      "abstract" : true,
+      "arguments" : [
+        "%sample.one%",
+        "%sample.two%"
+      ],
+      "call" : [
+        {
+          "method" : "setThree",
+          "arguments" : [
+            "%sample.three%"
+          ]
+        }
+      ]
+    },
+    {
+      "id" : "sample.inheritance.one",
+      "class" : "GSoares\\Test\\Sample\\InheritanceOne",
+      "parent" : "sample.abstract"
     }
   ]
 }

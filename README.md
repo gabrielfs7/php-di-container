@@ -58,6 +58,28 @@ Create container.json file
           ]
         }
       ]
+    },
+    {
+      "id" : "sample.abstract",
+      "class" : "GSoares\\Test\\Sample\\Abstract",
+      "abstract" : true,
+      "arguments" : [
+        "%sample.one%",
+        "%sample.two%"
+      ],
+      "call" : [
+        {
+          "method" : "setThree",
+          "arguments" : [
+            "%sample.three%"
+          ]
+        }
+      ]
+    },
+    {
+      "id" : "sample.inheritance.one",
+      "class" : "GSoares\\Test\\Sample\\InheritanceOne",
+      "parent" : "sample.abstract"
     }
   ]
 }
@@ -80,6 +102,11 @@ $container->get('environment'); // prod
 $container->get('valid-ips'); // array(...)
 $container->get('database'); // \stdClass(...)
 $container->get('sample.one'); // class GSoares\Test\DiContainer\Sample\\One
+
+# Inheritance
+$container->get('sample.inheritance.one')->getOne(); // class GSoares\Test\DiContainer\Sample\\One
+$container->get('sample.inheritance.one')->getTwo(); // class GSoares\Test\DiContainer\Sample\\Two
+$container->get('sample.inheritance.one')->getThree(); // class GSoares\Test\DiContainer\Sample\\Three
 ```
 
 - For production you can enable cache and compile it before build.

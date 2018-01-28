@@ -102,6 +102,12 @@ class JsonDecoder implements DecoderInterface
             'class' => function ($var) {
                 return is_string($var);
             },
+            'abstract' => function ($var) {
+                return is_bool($var);
+            },
+            'parent' => function ($var) {
+                return is_string($var);
+            },
             'arguments' => function ($var) {
                 return is_array($var);
             },
