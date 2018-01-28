@@ -20,6 +20,11 @@ abstract class AbstractSample
      */
     protected $three;
 
+    /**
+     * @var string
+     */
+    private $changeable;
+
     public function __construct(One $one, Two $two)
     {
         $this->one = $one;
@@ -62,5 +67,23 @@ abstract class AbstractSample
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getChangeable()
+    {
+        return $this->changeable;
+    }
 
+    /**
+     * @param string $changeable
+     *
+     * @return $this
+     */
+    public function setChangeable($changeable)
+    {
+        $this->changeable = $changeable;
+
+        return $this;
+    }
 }

@@ -48,6 +48,12 @@
       "id" : "sample.inheritance.one",
       "class" : "GSoares\\Test\\Sample\\InheritanceOne",
       "parent" : "sample.abstract"
+    },
+    {
+      "id" : "sample.inheritance.two",
+      "class" : "GSoares\\Test\\Sample\\InheritanceTwo",
+      "parent" : "sample.abstract",
+      "unique" : true
     }
   ]
 }

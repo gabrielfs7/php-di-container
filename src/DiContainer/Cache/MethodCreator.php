@@ -133,12 +133,9 @@ class MethodCreator implements MethodCreatorInterface
             );
         }
 
-        if ($serviceDto->parent) {
-
-        }
 
         return sprintf(
-            $this->getServiceMethodBody(),
+            $this->getServiceMethodBody($serviceDto),
             $serviceDto->class,
             $this->createMethodName($serviceDto->id),
             $serviceDto->class,
@@ -148,16 +145,29 @@ class MethodCreator implements MethodCreatorInterface
     }
 
     /**
+     * @param ServiceDto $serviceDto
+     *
      * @return string
      */
-    private function getServiceMethodBody()
+    private function getServiceMethodBody(ServiceDto $serviceDto)
     {
+        $cache = $serviceDto->unique ?
+            '' :
+            '
+            static $service;
+
+            if ($service) {
+                return $service;
+            }
+        ';
+
         return '
         /**
          * @return %s
          */
         public function %s
         {
+            ' . $cache . '
             $service = new %s(%s);
             %s
 

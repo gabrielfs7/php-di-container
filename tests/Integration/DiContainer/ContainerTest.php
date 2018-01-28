@@ -131,6 +131,23 @@ class ContainerTest extends TestCase
     /**
      * @test
      */
+    public function testUniqueService()
+    {
+        $container = $this->createContainer($this->defaultPaths);
+
+        $inheritanceOne = $container->get('sample.inheritance.one');
+        $inheritanceOne->setChangeable('test');
+
+        $inheritanceTwo = $container->get('sample.inheritance.two');
+        $inheritanceTwo->setChangeable('test');
+
+        $this->assertEquals('test', $container->get('sample.inheritance.one')->getChangeable());
+        $this->assertEquals(null, $container->get('sample.inheritance.two')->getChangeable());
+    }
+
+    /**
+     * @test
+     */
     public function testGetParameter()
     {
         $this->assertEquals('prod', $this->createContainer($this->defaultPaths)->get('environment'));

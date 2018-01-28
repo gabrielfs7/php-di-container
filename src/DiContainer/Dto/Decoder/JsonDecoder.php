@@ -108,6 +108,9 @@ class JsonDecoder implements DecoderInterface
             'parent' => function ($var) {
                 return is_string($var);
             },
+            'unique' => function ($var) {
+                return is_bool($var);
+            },
             'arguments' => function ($var) {
                 return is_array($var);
             },

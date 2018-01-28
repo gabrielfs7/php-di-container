@@ -18,6 +18,11 @@ class ServiceDto
     /**
      * @var bool
      */
+    public $unique = false;
+
+    /**
+     * @var bool
+     */
     public $abstract = false;
 
     /**
